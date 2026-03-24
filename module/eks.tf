@@ -27,16 +27,20 @@ resource "aws_iam_openid_connect_provider" "eks_oidc" {
   url = data.tls_certificate.eks_certificate.url
 }
 
-resource "aws_eks_addon" "eks-addon"{
-    
-    for_each = { for idx, addon in var.addons : idx => addon }
-    cluster_name = aws_eks_cluster.eks[0].name
-    addon_name = each.value.name
-    addon_version = each.value.version
+resource "aws_eks_addon" "eks-addon" {
 
-    depends_on = [  ]
+  for_each = { for idx, addon in var.addons : idx => addon }
 
+  cluster_name = aws_eks_cluster.eks[0].name
+  addon_name   = each.value.name
 
+  
+  # addon_version = each.value.version
+
+  depends_on = [
+    aws_eks_node_group.ondemandnode,
+    aws_eks_node_group.spot_node
+  ]
 }
 
 resource "aws_eks_node_group" "ondemandnode" {
