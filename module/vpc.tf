@@ -129,10 +129,10 @@ resource "aws_security_group" "aws_sg" {
     description = "Allow 443 from the jump server only"
     vpc_id = aws_vpc.vpc.id
     ingress {
-        from_port = 433
-        to_port = 433
+        from_port = 443
+        to_port = 443
         protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]  # Replace it with jump server ip adress with /32
+        cidr_blocks = ["44.203.6.195/32"]  # Replace it with jump server ip adress with /32
     }
     egress {
         from_port = 0
