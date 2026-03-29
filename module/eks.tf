@@ -61,6 +61,14 @@ resource "aws_launch_template" "eks_lt" {
     http_tokens                 = "required"
     http_put_response_hop_limit = 2   # 🔥 CRITICAL FIX
   }
+block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size = 50   # ✅ MOVE HERE
+      volume_type = "gp3"
+    }
+  }
 }
 
 
@@ -135,7 +143,7 @@ launch_template {
     version = "$Latest"
   }
 
-disk_size = 50
+
 
 
 
