@@ -57,8 +57,9 @@ resource "aws_eks_addon" "eks-addon" {
 
 resource "aws_launch_template" "eks_lt" {
   name_prefix = "eks-lt"
-
+  instance_type = "t3.medium" 
   metadata_options {
+    http_endpoint               = "enabled" 
     http_tokens                 = "required"
     http_put_response_hop_limit = 2   # 🔥 CRITICAL FIX
   }
@@ -67,6 +68,24 @@ block_device_mappings {
 
     ebs {
       volume_size = 50   # ✅ MOVE HERE
+      volume_type = "gp3"
+    }
+  }
+}
+
+resource "aws_launch_template" "spot_lt" {
+  name_prefix = "eks-spot-lt"
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size = 50
       volume_type = "gp3"
     }
   }
@@ -84,7 +103,7 @@ resource "aws_eks_node_group" "ondemandnode" {
     min_size = 1
     max_size = 3
   }
-  instance_types = ["t3.medium"]
+ 
   capacity_type = "ON_DEMAND"
   update_config {
     max_unavailable = 1
@@ -140,7 +159,7 @@ resource "aws_eks_node_group" "spot_node" {
   }
 
 launch_template {
-    id      = aws_launch_template.eks_lt.id
+    id      = aws_launch_template.spot_lt.id
     version = "$Latest"
   }
 
