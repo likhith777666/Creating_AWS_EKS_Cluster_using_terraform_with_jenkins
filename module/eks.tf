@@ -25,6 +25,7 @@ resource "aws_iam_openid_connect_provider" "eks_oidc" {
   client_id_list = [ "sts.amazonaws.com" ]
   thumbprint_list = [data.tls_certificate.eks_certificate.certificates[0].sha1_fingerprint]
   url = aws_eks_cluster.eks[0].identity[0].oidc[0].issuer
+  
 }
 
 resource "aws_eks_addon" "eks-addon" {
@@ -48,10 +49,10 @@ resource "aws_eks_addon" "eks-addon" {
 
   # addon_version = each.value.version
 
-# depends_on = [
-    # aws_eks_node_group.ondemandnode,
-    # aws_eks_node_group.spot_node
-  # ]
+ depends_on = [
+     aws_eks_node_group.ondemandnode,
+     aws_eks_node_group.spot_node
+   ]
 }
 
 
