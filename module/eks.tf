@@ -53,6 +53,17 @@ resource "aws_eks_addon" "eks-addon" {
   ]
 }
 
+
+resource "aws_launch_template" "eks_lt" {
+  name_prefix = "eks-lt"
+
+  metadata_options {
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2   # 🔥 CRITICAL FIX
+  }
+}
+
+
 resource "aws_eks_node_group" "ondemandnode" {
   cluster_name = aws_eks_cluster.eks[0].name
   node_group_name = "eks-cluster-ondemand-node-group"
@@ -69,6 +80,12 @@ resource "aws_eks_node_group" "ondemandnode" {
   update_config {
     max_unavailable = 1
   }
+
+launch_template {
+    id      = aws_launch_template.eks_lt.id
+    version = "$Latest"
+  }
+
 
   tags = {
     Name = "eks-cluster-ondemand-nodes"
@@ -112,7 +129,16 @@ resource "aws_eks_node_group" "spot_node" {
     type  = "spot"
     lifecycle = "spot"
   }
+
+launch_template {
+    id      = aws_launch_template.eks_lt.id
+    version = "$Latest"
+  }
+
 disk_size = 50
+
+
+
 depends_on = [ aws_eks_cluster.eks ]
 
 }
