@@ -132,7 +132,7 @@ resource "aws_security_group" "aws_sg" {
         from_port = 443
         to_port = 443
         protocol = "tcp"
-        cidr_blocks = ["44.203.6.195/32"]  # Replace it with jump server ip adress with /32
+        cidr_blocks = ["10.0.0.252/32"]  # Replace it with jump server private ip adress with /32
     }
     egress {
         from_port = 0
