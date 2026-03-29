@@ -34,7 +34,8 @@ resource "aws_eks_addon" "eks-addon" {
   cluster_name = aws_eks_cluster.eks[0].name
   addon_name   = each.value.name
 
-  
+  service_account_role_arn = aws_iam_role.eks_oids.arn
+
   # addon_version = each.value.version
 
   depends_on = [
