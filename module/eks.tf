@@ -34,7 +34,16 @@ resource "aws_eks_addon" "eks-addon" {
   cluster_name = aws_eks_cluster.eks[0].name
   addon_name   = each.value.name
 
-  service_account_role_arn = aws_iam_role.eks_oids.arn
+  
+  service_account_role_arn = each.value.name == "aws-ebs-csi-driver" ? aws_iam_role.eks_oids.arn : null
+
+  
+  resolve_conflicts = "OVERWRITE"
+
+ 
+  timeouts {
+    create = "30m"
+  }
 
   # addon_version = each.value.version
 
