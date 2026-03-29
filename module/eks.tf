@@ -38,7 +38,8 @@ resource "aws_eks_addon" "eks-addon" {
   service_account_role_arn = each.value.name == "aws-ebs-csi-driver" ? aws_iam_role.eks_oids.arn : null
 
   
-  resolve_conflicts = "OVERWRITE"
+  resolve_conflicts_on_create = "OVERWRITE"
+  resolve_conflicts_on_update = "OVERWRITE"
 
  
   timeouts {
