@@ -24,7 +24,7 @@ access_config {
 resource "aws_iam_openid_connect_provider" "eks_oidc" {
   client_id_list = [ "sts.amazonaws.com" ]
   thumbprint_list = [data.tls_certificate.eks_certificate.certificates[0].sha1_fingerprint]
-  url = data.tls_certificate.eks_certificate.url
+  url = aws_eks_cluster.eks[0].identity[0].oidc[0].issuer
 }
 
 resource "aws_eks_addon" "eks-addon" {
@@ -48,10 +48,10 @@ resource "aws_eks_addon" "eks-addon" {
 
   # addon_version = each.value.version
 
-  depends_on = [
-    aws_eks_node_group.ondemandnode,
-    aws_eks_node_group.spot_node
-  ]
+# depends_on = [
+    # aws_eks_node_group.ondemandnode,
+    # aws_eks_node_group.spot_node
+  # ]
 }
 
 
@@ -99,7 +99,7 @@ resource "aws_eks_node_group" "ondemandnode" {
 
   subnet_ids = [aws_subnet.private_subnet[0].id, aws_subnet.private_subnet[1].id, aws_subnet.private_subnet[2].id]
   scaling_config {
-    desired_size = 2
+    desired_size = 1
     min_size = 1
     max_size = 3
   }
@@ -134,7 +134,7 @@ resource "aws_eks_node_group" "spot_node" {
 
   subnet_ids = [aws_subnet.private_subnet[0].id, aws_subnet.private_subnet[1].id, aws_subnet.private_subnet[2].id]
   scaling_config {
-    desired_size = 2
+    desired_size = 1
     min_size = 1
     max_size = 3
   }
